@@ -386,9 +386,8 @@ console.log("bug in changeSliderLabel");
 changeSliderLabel(size);
 
 // Returns the size difference to change a pizza element from one size to another. Called by changePizzaSlices(size).
-function determineDx (elem, size) {
-var oldwidth = elem.offsetWidth;
-var windowwidth = document.querySelector("#randomPizzas").offsetWidth;
+function determineDx (oldwidth,windowwidth, size) {
+
 var oldsize = oldwidth / windowwidth;
 // TODO: change to 3 sizes? no more xl?
 // Changes the slider value to a percent width
@@ -410,10 +409,13 @@ return dx;
 }
 // Iterates through pizza elements on the page and changes their widths
 function changePizzaSizes(size) {
-for (var i = 0; i < document.querySelectorAll(".randomPizzaContainer").length; i++) {
-var dx = determineDx(document.querySelectorAll(".randomPizzaContainer")[i], size);
-var newwidth = (document.querySelectorAll(".randomPizzaContainer")[i].offsetWidth + dx) + 'px';
-document.querySelectorAll(".randomPizzaContainer")[i].style.width = newwidth;
+var rpiz=document.querySelectorAll(".randomPizzaContainer");
+var oldwidth=rpiz[0].offsetWidth;
+var windowwidth=document.querySelector("#randomPizzas").offsetWidth;
+for (var i = 0; i < rpiz.length; i++) {
+var dx = determineDx(oldwidth,windowwidth ,size);
+var newwidth = (rpiz[i].offsetWidth + dx) + 'px';
+rpiz[i].style.width = newwidth;
 }
 }
 changePizzaSizes(size);
@@ -471,8 +473,7 @@ logAverageFrame(timesToUpdatePosition);
 // runs updatePositions on scroll
 window.addEventListener('scroll', updatePositions);
 // Generates the sliding pizzas when the page loads.
-document.addEventListener('DOMContentLoaded', function() {   
-var start=window.performance.now();
+document.addEventListener('DOMContentLoaded', function() {
 var cols = 8;
 var s = 256;
 for (var i = 0; i < 200; i++) {
@@ -483,8 +484,5 @@ elem.basicLeft = (i % cols) * s;
 elem.style.top = (Math.floor(i / cols) * s) + 'px';
 document.querySelector("#movingPizzas1").appendChild(elem);
 }
-var end=window.performance.now();
-var timeToCreatemovpizzas = end-start;
-console.log(timeToCreatemovpizzas);
 updatePositions();
 });
