@@ -384,10 +384,10 @@ console.log("bug in changeSliderLabel");
 }
 }
 changeSliderLabel(size);
-
 // Returns the size difference to change a pizza element from one size to another. Called by changePizzaSlices(size).
-function determineDx (oldwidth,windowwidth, size) {
-
+function determineDx (elem, size) {
+var oldwidth = elem.offsetWidth;
+var windowwidth = document.querySelector("#randomPizzas").offsetWidth;
 var oldsize = oldwidth / windowwidth;
 // TODO: change to 3 sizes? no more xl?
 // Changes the slider value to a percent width
@@ -409,13 +409,13 @@ return dx;
 }
 // Iterates through pizza elements on the page and changes their widths
 function changePizzaSizes(size) {
-var rpiz=document.querySelectorAll(".randomPizzaContainer");
-var oldwidth=rpiz[0].offsetWidth;
-var windowwidth=document.querySelector("#randomPizzas").offsetWidth;
-for (var i = 0; i < rpiz.length; i++) {
-var dx = determineDx(oldwidth,windowwidth ,size);
-var newwidth = (rpiz[i].offsetWidth + dx) + 'px';
-rpiz[i].style.width = newwidth;
+//cached random Pizza Container
+var randomPizza=document.querySelectorAll(".randomPizzaContainer");
+//vars dx and new width do not need to be recalculated every time, so out of loop they go
+var dx = determineDx(randomPizza[0], size);
+var newwidth = (randomPizza[0].offsetWidth + dx) + 'px';
+for (var i = 0; i < randomPizza.length; i++) {
+randomPizza[i].style.width = newwidth;
 }
 }
 changePizzaSizes(size);
@@ -454,11 +454,11 @@ console.log("Average time to generate last 10 frames: " + sum / 10 + "ms");
 function updatePositions() {
 frame++;
 window.performance.mark("mark_start_frame");
-//caching document.body.scrollTop and taking document call out of loop helps scrolling
-var cachedscroll=document.body.scrollTop;
+//caching scrollTop
+var cachedScroll=document.body.scrollTop;
 var items = document.querySelectorAll('.mover');
 for (var i = 0; i < items.length; i++) {
-var phase = Math.sin((cachedscroll / 1250) + (i % 5));
+var phase = Math.sin((cachedScroll / 1250) + (i % 5));
 items[i].style.left = items[i].basicLeft + 100 * phase + 'px';
 }
 // User Timing API to the rescue again. Seriously, it's worth learning.
@@ -480,6 +480,8 @@ for (var i = 0; i < 200; i++) {
 var elem = document.createElement('img');
 elem.className = 'mover';
 elem.src = "images/pizza.png";
+elem.style.height = "100px";
+elem.style.width = "73.333px";
 elem.basicLeft = (i % cols) * s;
 elem.style.top = (Math.floor(i / cols) * s) + 'px';
 document.querySelector("#movingPizzas1").appendChild(elem);
